@@ -43,14 +43,28 @@ class Ivr{
                 echo $numero[$i];
         }
     }
-    
+
+
+    /**
+    * Muestra en pantalla un mensaje o lo reproduce si se cuenta con un tts
+    * @param string $mensaje mensaje a mostrar/reproducir
+    * @param string $tts indica si se usara un tts (false) 
+    */
+    public static function reproducirMensaje($mensaje, $tts=false){
+        if($tts){
+            //write here tts functions
+        }else{
+            echo $mensaje, "\n";
+        }
+    }
+        
     /**
      * Reproduce un sonido ubicado en el directorio sounds/
      * @param type $mensaje  Sonido a reproducir
      * @param type $useDefaultPath  false para indicar que el sonido no esta ubicado en el directorio sounds/
      */
     public static function reproducirSonido($mensaje, $useDefaultPath = true){
-        if($mensaje != 'n2t/'){
+        if($mensaje != 'n2t/' && $mensaje != null){
             echo "Reproduciendo: ",$mensaje;
             $soundfile = glob(self::$sonidosDir.$mensaje."*");
             

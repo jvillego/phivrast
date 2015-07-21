@@ -12,7 +12,8 @@ define('IVRPATH', dirname(__FILE__));
 
 define('UNIQUEID', isset($argv[1])?$argv[1]:null);
 
-include( dirname(__FILE__).'/../phivrast/lib/engine.php');
+
+include( dirname(dirname(__FILE__)).'/phivrast/lib/engine.php');
 
 Engine::start();
 

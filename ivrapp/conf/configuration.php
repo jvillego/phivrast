@@ -1,7 +1,7 @@
 ;<?php exit();/*
 ;
 [core]
-execution_mode = asterisk; local | asterisk
+execution_mode = local; local | asterisk
 sip_server = 
 logfile = /tmp/logfilename.log
 
@@ -18,6 +18,7 @@ database = test
 
 
 [sox]
+os = linux ; linux | windows
 cmd = ..\phivrast\bin\sox-14.3.2\sox.exe
 soundrate = 4200
 
