@@ -21,14 +21,15 @@ class Engine extends BaseRun{
     
     public static function start($controller = null, $action = null, $parameters = array(), $agi = null){
 		
-		include_once BASEDIR . '/lib/Console.php';
-		
-		
-        self::$config = parse_ini_file( BASEDIR . '/conf/configuration.php', true);
-        if(self::$config['core']['execution_mode']=='local')
+	include_once BASEDIR . '/lib/Console.php';		
+	
+        self::$config = parse_ini_file( 'conf/configuration.php', true);
+
+        if(self::$config['core']['execution_mode']=='local'){
             require_once BASEDIR . '/lib/Ivr.php';
-        elseif(self::$config['core']['execution_mode']=='asterisk')
+        }elseif(self::$config['core']['execution_mode']=='asterisk'){
             require_once BASEDIR . '/lib/IvrAsterisk.php';
+        }
 
         if($agi != null){
             Ivr::setAgi ($agi);
@@ -61,8 +62,8 @@ class Engine extends BaseRun{
      * Ejecucion para el contexto h,  el objeto AGI en este contexto no esta disponible
      * @param array $parameters
      */
-    public static function h($parameters = array()){
-        self::$config = parse_ini_file( BASEDIR . '/conf/configuration.php', true);
+    public static function h($parameters){
+        self::$config = parse_ini_file( 'conf/configuration.php', true);
         
         self::$controller =  self::$config['run']['defaultController'];
         self::$action = 'h';
@@ -91,8 +92,8 @@ class Engine extends BaseRun{
     
     public static function run(){
         include_once BASEDIR . '/lib/Controller.php';
-        include_once BASEDIR . '/controllers/ApplicationController.php';
-        $controllerPath = BASEDIR . '/controllers/'.self::$controller.'Controller.php';
+        include_once 'controllers/ApplicationController.php';
+        $controllerPath = 'controllers/'.self::$controller.'Controller.php';
         if(file_exists($controllerPath)){
             include_once $controllerPath;
             $controllerName = self::$controller.'Controller';
