@@ -121,14 +121,16 @@ class Engine extends BaseRun{
                 $action = self::$action;
                 if(method_exists(self::$ocontroller[self::$controller], self::$action)){
                     $parameters = func_get_args();
-                    @call_user_method(self::$action, self::$ocontroller[self::$controller], $parameters[0]); //Deprecated function
+//                    @call_user_method(self::$action, self::$ocontroller[self::$controller], $parameters[0]); //Deprecated function
+                    @forward_static_call_array(array(self::$ocontroller[self::$controller], self::$action), $parameters[0]);
                 }else{
                     error_log("El action [".self::$controller."::".self::$action."()] no fue encontrado.\n",3,'/tmp/error.log') ; //TODO: cambiar estos metodos
                 }
             }else{
                 if(method_exists(self::$ocontroller[self::$controller], self::$action)){
                     $parameters = func_get_args();
-                    call_user_method(self::$action, self::$ocontroller[self::$controller], $parameters[0] ); //Deprecated function
+                    //call_user_method(self::$action, self::$ocontroller[self::$controller], $parameters[0] ); //Deprecated function
+                    @forward_static_call_array(array(self::$ocontroller[self::$controller], self::$action), $parameters[0]);
                 }else{
                     error_log("El action [".self::$controller."::".self::$action."()] no fue encontrado.\n",3,'/tmp/error.log') ;
                 }
