@@ -44,8 +44,6 @@ class Engine extends BaseRun{
         self::$action = !is_null($action)? $action :  self::$config['run']['defaultAction'];
         self::$ocontroller = array();
         
-        console::trace("route: ".self::$controller. '/'.self::$action);
-        
         //Cargamos scripts
         include_once BASEDIR . '/lib/Curl.php';
         $modelPath = BASEDIR . '/lib/scripts/*.php';
@@ -111,6 +109,7 @@ class Engine extends BaseRun{
     }
     
     public static function run(){
+        console::trace("route: ".self::$controller. '/'.self::$action);
         include_once BASEDIR . '/lib/Controller.php';
         include_once IVRPATH . '/controllers/ApplicationController.php';
         $controllerPath = IVRPATH . '/controllers/'.self::$controller.'Controller.php';
