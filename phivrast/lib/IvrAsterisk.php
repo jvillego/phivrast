@@ -13,6 +13,8 @@ class Ivr{
 
     private static $sip_server;
     
+    public static $playsounds = true;
+    
     /**
      * Establece el objeto agi
      * @param type $agi 
@@ -25,7 +27,7 @@ class Ivr{
     * Constructor
     */ 
     public static function AgiStart($conf=array()) {
-        self::$sonidosDir = BASEDIR . '/sounds/';
+        self::$sonidosDir = IVRPATH . '/sounds/';
         if(!is_object(self::$agi)){
             self::$agi = new AGI();
             self::$sip_server = isset($conf['core']['sip_server'])&&!empty($conf['core']['sip_server'])? 
@@ -54,14 +56,39 @@ class Ivr{
         }
     }
 
+    
+    /**
+    * Muestra en pantalla un mensaje o lo reproduce si se cuenta con un tts
+    * @param string $mensaje mensaje a mostrar/reproducir
+    * @param string $tts indica si se usara un tts (false) 
+    */
+    public static function reproducirMensaje($mensaje, $soundFile = null, $tts=false){
+        
+        if($tts){
+            //write here tts functions
+        }else{
+            if(!empty($soundFile)){
+//                echo $mensaje, "\n";
+                if(self::$playsounds){
+                    self::reproducirSonido($soundFile);
+                }
+            }else{
+//                echo $mensaje, "\n";
+            }
+        }
+        
+    }
+    
     /**
      * Reproduce un archivo de audio en *gsm, *sln
      * @param type $fileName nombre del archivo
      * @param type $useDefaultPath Usar ruta por defecto.  (true)
      */
     public static function reproducirSonido($fileName, $useDefaultPath = true){
-        $stream = $useDefaultPath? self::$sonidosDir.$fileName : $fileName;
-        $arr = glob($stream.'{*gsm,*sln}', GLOB_BRACE);
+        $stream = $useDefaultPath? (self::$sonidosDir.$fileName) : $fileName;
+        error_log("stream: $stream\n", 3, '/tmp/IVR_LINEA1_METRO.log');
+        $arr = glob($stream.'{*gsm,*sln,*wav}', GLOB_BRACE);
+        error_log("FUCK:".var_export($arr,true)."!\n", 3, '/tmp/IVR_LINEA1_METRO.log');
         if(count($arr)>0){
             $aux = array();
             $aux['code'] = 510;
@@ -117,7 +144,7 @@ class Ivr{
        unlink("$filename.WAV");
     }
    
-    public static function _goto($context, $exten, $priority) {
+    public static function jumpto($context, $exten, $priority) {
         self::$agi->exec("Goto", "$context,$exten,$priority");
     }
     

@@ -9,7 +9,8 @@
 function pedirDatos($mensaje, $lenght=255) {
 	echo "Ingrese datos: ";
         $var = fopen("php://stdin", "r");
-        $line = fgets($var, $lenght+1);        
+        $line = fgets($var, $lenght+1);
+        echo "\n";
 	return trim($line);
 }
 
@@ -17,6 +18,8 @@ class Ivr{
     private static $response;
 
     private static $sonidosDir;
+    
+    public static $playsounds = true;
     
     public static function setAgi($agi) {
         //Por compatibilidad esta funcion esta vacia
@@ -26,7 +29,7 @@ class Ivr{
     * Constructor
     */ 
     public static function AgiStart() {
-        self::$sonidosDir = BASEDIR . DIRECTORY_SEPARATOR.'sounds'.DIRECTORY_SEPARATOR;
+        self::$sonidosDir = IVRPATH. DIRECTORY_SEPARATOR.'sounds'.DIRECTORY_SEPARATOR;
     }
     
     public static function agi(){
@@ -50,12 +53,21 @@ class Ivr{
     * @param string $mensaje mensaje a mostrar/reproducir
     * @param string $tts indica si se usara un tts (false) 
     */
-    public static function reproducirMensaje($mensaje, $tts=false){
+    public static function reproducirMensaje($mensaje, $soundFile = null, $tts=false){
+        
         if($tts){
             //write here tts functions
         }else{
-            echo $mensaje, "\n";
+            if(!empty($soundFile)){
+                echo $mensaje, "\n";
+                if(self::$playsounds){
+                    self::reproducirSonido($soundFile);
+                }
+            }else{
+                echo $mensaje, "\n";
+            }
         }
+        
     }
         
     /**
@@ -65,17 +77,23 @@ class Ivr{
      */
     public static function reproducirSonido($mensaje, $useDefaultPath = true){
         if($mensaje != 'n2t/' && $mensaje != null){
-            echo "Reproduciendo: ",$mensaje;
             $soundfile = glob(self::$sonidosDir.$mensaje."*");
-            
+            if(!self::$playsounds){
+                echo "$mensaje\n";return;
+            }
             if( count($soundfile)>0 ){
                 $afile = explode('.', $soundfile[0]);
-                $ext = $afile[count($afile)-1];
+                $ext = strtolower($afile[count($afile)-1]);
                 
+                echo "Reproduciendo: ", $soundfile[0], "\n";
 //                $apath = explode(DIRECTORY_SEPARATOR, $afile[0]);
 //                $filename = $apath[count($apath)-1];
                 
 //                if($filename == $mensaje){
+                
+                $operativeSystem = Engine::getConfigData('sox', 'os');
+                
+                if($operativeSystem == 'windows'){
                     $command = '';
                     switch($ext){
                         case 'sl':
@@ -87,7 +105,26 @@ class Ivr{
                             break;
                     }
                     echo system($command);
-//                }
+                }elseif($operativeSystem == 'linux'){
+                    $command = '';
+                    
+                    switch($ext){
+                        case 'sl':
+                        case 'sln':
+                            $command = 'sox -t sl -r '.Engine::getConfigData('sox', 'soundrate').' -c1 -q "'.  $soundfile[0]. '" -d ';
+                            break;
+                        case 'gsm':
+                            $command = 'sox -t gsm -r '.Engine::getConfigData('sox', 'soundrate').' -c1 -q "'.  $soundfile[0]. '" -d ';
+                            break;
+                        case 'wav':
+                            $command = 'sox -c1 -q "'.  $soundfile[0]. '" -d ';
+                            break;
+                    }
+                    echo system($command);
+                }
+                
+                
+                
             }else{
                 echo " ->[Not found!]";
             }
@@ -134,6 +171,18 @@ class Ivr{
                 ' -d  -t raw -r '.Engine::getConfigData('sox', 'soundrate').' "sounds/records/'.$filename.'.sln" trim 0 '.($maxduration/1000);
         system($command);
     }
+    
+    /**
+     * Permite saltar a una extension de un contexto
+     * @param string $context contexto de asterisk al que requiere saltar
+     * @param string $exten extension del contexto 
+     * @param string $priority prioridad
+     */
+    public static function jumpto($context, $exten, $priority) {
+        console::log("Call Jumps To  $context/$context/$priority");
+        exit();
+    }
+    
 }
 
 /*

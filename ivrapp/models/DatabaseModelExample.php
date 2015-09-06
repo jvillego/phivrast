@@ -15,8 +15,7 @@ class llamadas extends Model{
     }
     
     public static function terminarLlamada() {
-        $sql = "UPDATE llamadas SET fec_fin_llamada = NOW() WHERE uniqueid = '".UNIQUEID."'";
-        error_log('consulta a ejecutar esta bitch!: '. $sql. "\n",3,'/tmp/ivrsaldos.log');
+        $sql = "UPDATE llamadas SET fec_fin_llamada = NOW() WHERE id_llamada = '".self::$id_llamada."'";
         
         self::query($sql);
 
