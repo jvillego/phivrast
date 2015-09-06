@@ -48,7 +48,7 @@ class console{
         
         public static function trace($mensaje) {
             
-            if(self::$logLevel == self::LOG_LEVE_TRACE){
+            if(self::$logLevel <= self::LOG_LEVE_TRACE){
                 error_log(date('Y-m-d H:i:s').' - '.self::$format." - TRACE: ".$mensaje."\n", 3, self::$pathFile);
             }
             
@@ -56,7 +56,7 @@ class console{
         
         public static function info($mensaje) {
             
-            if(self::$logLevel == self::LOG_LEVE_INFO){
+            if(self::$logLevel <= self::LOG_LEVE_INFO){
                 error_log(date('Y-m-d H:i:s').' - '.self::$format." - INFO: ".$mensaje."\n", 3, self::$pathFile);
             }
             
@@ -64,7 +64,7 @@ class console{
         
         public static function warn($mensaje) {
             
-            if(self::$logLevel == self::LOG_LEVE_WARN){
+            if(self::$logLevel <= self::LOG_LEVE_WARN){
                 error_log(date('Y-m-d H:i:s').' - '.self::$format." - WARNING: ".$mensaje."\n", 3, self::$pathFile);
             }
             
@@ -72,7 +72,7 @@ class console{
         
         public static function error($mensaje) {
             
-            if(self::$logLevel == self::LOG_LEVE_ERROR){
+            if(self::$logLevel <= self::LOG_LEVE_ERROR){
                 error_log(date('Y-m-d H:i:s').' - '.self::$format." - ERROR: ".$mensaje."\n", 3, self::$pathFile);
             }
             

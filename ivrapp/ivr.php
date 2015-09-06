@@ -17,6 +17,7 @@ if(file_exists($framework)){
     
     
     $config = parse_ini_file( IVRPATH.'/conf/configuration.php', true);
+    $config['core']['ivrname'] = $config['core']['ivrname']. '-' .UNIQUEID;
     console::configure($config['core']);
     
     console::log("\n\n----------------------------------------------",false);
