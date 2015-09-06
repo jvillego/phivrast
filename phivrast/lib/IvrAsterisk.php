@@ -86,9 +86,7 @@ class Ivr{
      */
     public static function reproducirSonido($fileName, $useDefaultPath = true){
         $stream = $useDefaultPath? (self::$sonidosDir.$fileName) : $fileName;
-        error_log("stream: $stream\n", 3, '/tmp/IVR_LINEA1_METRO.log');
         $arr = glob($stream.'{*gsm,*sln,*wav}', GLOB_BRACE);
-        error_log("FUCK:".var_export($arr,true)."!\n", 3, '/tmp/IVR_LINEA1_METRO.log');
         if(count($arr)>0){
             $aux = array();
             $aux['code'] = 510;
