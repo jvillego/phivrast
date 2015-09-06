@@ -19,14 +19,16 @@ class Engine extends BaseRun{
     private static $ocontroller;
     private static $action;
     
-    public static function start($controller = null, $action = null, $parameters = array(), $agi = null){
-		
-	include_once BASEDIR . '/lib/Console.php';		
+    public static function start($config = array(), $controller = null, $action = null, $parameters = array(), $agi = null){
 	
-        self::$config = parse_ini_file( 'conf/configuration.php', true);
-
+        include_once BASEDIR . '/lib/Console.php';		
+		
+        self::$config = $config;
         if(self::$config['core']['execution_mode']=='local'){
             require_once BASEDIR . '/lib/Ivr.php';
+            if(isset(Ivr::$playsounds)){
+                Ivr::$playsounds = self::$config['development']['libivr_play_sounds'];
+            }
         }elseif(self::$config['core']['execution_mode']=='asterisk'){
             require_once BASEDIR . '/lib/IvrAsterisk.php';
         }
@@ -36,11 +38,13 @@ class Engine extends BaseRun{
         }
         else Ivr::AgiStart(self::$config);
         
-	console::configure(self::$config['core']['logfile']);
+//	console::configure(self::$config['core']['logfile']);
         
         self::$controller =  !is_null($controller)? $controller :  self::$config['run']['defaultController'];
         self::$action = !is_null($action)? $action :  self::$config['run']['defaultAction'];
         self::$ocontroller = array();
+        
+        console::trace("route: ".self::$controller. '/'.self::$action);
         
         //Cargamos scripts
         include_once BASEDIR . '/lib/Curl.php';
@@ -50,9 +54,17 @@ class Engine extends BaseRun{
         //cargamos los models
         include_once BASEDIR . '/lib/Model.php';
         include_once BASEDIR . '/lib/SoapModel.php';
-        $modelPath = 'models/*.php';
+        $modelPath = IVRPATH . '/models/*.php';
         $models = glob($modelPath);
-        foreach ($models as $model) include_once $model;
+        foreach ($models as $model) {
+            include_once $model;
+            $aModelPath = explode('/',$model);
+            $modelName = str_replace('.php', '', $aModelPath[count($aModelPath)-1]);
+            
+            if(method_exists($modelName, '__init')){   
+                $modelName::__init();   
+            }
+        }
         
         self::run($parameters);
         
@@ -75,9 +87,17 @@ class Engine extends BaseRun{
         foreach ($models as $model) include_once $model;
         //cargamos los models
         include_once BASEDIR . '/lib/Model.php';
-        $modelPath = BASEDIR . '/models/*.php';
+        $modelPath = IVRPATH . '/models/*.php';
         $models = glob($modelPath);
-        foreach ($models as $model) include_once $model;
+        foreach ($models as $model) {
+            include_once $model;
+            $aModelPath = explode('/',$model);
+            $modelName = str_replace('.php', '', $aModelPath[count($aModelPath)-1]);
+            
+            if(method_exists($modelName, '__init')){   
+                $modelName::__init();   
+            }
+        }
         
         self::run($parameters);
     }
@@ -92,8 +112,8 @@ class Engine extends BaseRun{
     
     public static function run(){
         include_once BASEDIR . '/lib/Controller.php';
-        include_once 'controllers/ApplicationController.php';
-        $controllerPath = 'controllers/'.self::$controller.'Controller.php';
+        include_once IVRPATH . '/controllers/ApplicationController.php';
+        $controllerPath = IVRPATH . '/controllers/'.self::$controller.'Controller.php';
         if(file_exists($controllerPath)){
             include_once $controllerPath;
             $controllerName = self::$controller.'Controller';
@@ -104,18 +124,18 @@ class Engine extends BaseRun{
                     $parameters = func_get_args();
                     @call_user_method(self::$action, self::$ocontroller[self::$controller], $parameters[0]); //Deprecated function
                 }else{
-                    slog("El action [".self::$controller."::".self::$action."()] no fue encontrado.\n") ;
+                    error_log("El action [".self::$controller."::".self::$action."()] no fue encontrado.\n",3,'/tmp/error.log') ; //TODO: cambiar estos metodos
                 }
             }else{
                 if(method_exists(self::$ocontroller[self::$controller], self::$action)){
                     $parameters = func_get_args();
                     call_user_method(self::$action, self::$ocontroller[self::$controller], $parameters[0] ); //Deprecated function
                 }else{
-                    slog("El action [".self::$controller."::".self::$action."()] no fue encontrado.\n") ;
+                    error_log("El action [".self::$controller."::".self::$action."()] no fue encontrado.\n",3,'/tmp/error.log') ;
                 }
             }
         }else{
-            slog("El controlador [controllers/".self::$controller."Controller.php] no fue encontrado.\n");
+            error_log("El controlador [controllers/".self::$controller."Controller.php] no fue encontrado.\n",3,'/tmp/error.log');
         }
         
     }
