@@ -52,6 +52,7 @@ class Engine extends BaseRun{
         //cargamos los models
         include_once BASEDIR . '/lib/Model.php';
         include_once BASEDIR . '/lib/SoapModel.php';
+        include_once BASEDIR . '/lib/CurlModel.php';
         $modelPath = IVRPATH . '/models/*.php';
         $models = glob($modelPath);
         foreach ($models as $model) {

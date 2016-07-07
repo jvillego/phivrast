@@ -111,7 +111,7 @@ class Ivr{
                     switch($ext){
                         case 'sl':
                         case 'sln':
-                            $command = 'sox -t sl -r '.Engine::getConfigData('sox', 'soundrate').' -c1 -q "'.  $soundfile[0]. '" -d ';
+                            $command = 'sox -c1 -q "'.  $soundfile[0]. '" -d ';
                             break;
                         case 'gsm':
                             $command = 'sox -t gsm -r '.Engine::getConfigData('sox', 'soundrate').' -c1 -q "'.  $soundfile[0]. '" -d ';
