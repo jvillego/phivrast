@@ -74,18 +74,22 @@ class Engine extends BaseRun{
      * @param array $parameters
      */
     public static function h($parameters){
-        self::$config = parse_ini_file( 'conf/configuration.php', true);
+        //self::$config = parse_ini_file( 'conf/configuration.php', true);
+        self::$config = $parameters;
         
         self::$controller =  self::$config['run']['defaultController'];
         self::$action = 'h';
         self::$ocontroller = array();
         
         //Cargamos scripts
+        include_once BASEDIR . '/lib/Curl.php';
         $modelPath = BASEDIR . '/lib/scripts/*.php';
         $models = glob($modelPath);
         foreach ($models as $model) include_once $model;
         //cargamos los models
         include_once BASEDIR . '/lib/Model.php';
+        include_once BASEDIR . '/lib/SoapModel.php';
+        include_once BASEDIR . '/lib/CurlModel.php';
         $modelPath = IVRPATH . '/models/*.php';
         $models = glob($modelPath);
         foreach ($models as $model) {
