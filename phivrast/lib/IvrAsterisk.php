@@ -117,9 +117,9 @@ class Ivr{
      * Traslada una llamada a un DNIS diferente
      * @param type $numero 
      */
-    public static function trasladarLlamada($numero){
-        //self::$agi->exec_dial("SIP",  "$numero@italtel", 60);
-        self::$agi->exec("Dial",  "SIP/$numero".(!empty(self::$sip_server)?'@'.self::$sip_server:'').", 60");
+    
+    public static function trasladarLlamada($numero, $use_sip=true){
+    	self::$agi->exec("Dial",  ($use_sip?'SIP/':'')."$numero".(!empty(self::$sip_server)?'@'.self::$sip_server:'').", 60");
     }
 	
 	/**
