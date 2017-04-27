@@ -89,7 +89,7 @@ class Curl{
         $this->setopt(CURLOPT_TIMEOUT, 60);
         
         //curl_setopt($this->curl, CURLOPT_HTTPHEADER, array("Expect: "));
-        curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+        //curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
 
         $result = curl_exec($this->curl);
         return $result;

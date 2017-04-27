@@ -16,6 +16,8 @@ class console{
         const LOG_LEVE_WARN = 3;
         const LOG_LEVE_ERROR = 4;
         const LOG_LEVE_LOG = 5;
+
+        private static $colors = false;
         
         public static function configure($config){
 		
@@ -49,7 +51,7 @@ class console{
         public static function trace($mensaje) {
             
             if(self::$logLevel <= self::LOG_LEVE_TRACE){
-                error_log(date('Y-m-d H:i:s').' - '.self::$format." - TRACE: ".$mensaje."\n", 3, self::$pathFile);
+                error_log( "\033[37m;" . date('Y-m-d H:i:s').' - '.self::$format." - TRACE: ".$mensaje."\n", 3, self::$pathFile). "\033[0m;";
             }
             
         }
@@ -57,7 +59,7 @@ class console{
         public static function info($mensaje) {
             
             if(self::$logLevel <= self::LOG_LEVE_INFO){
-                error_log(date('Y-m-d H:i:s').' - '.self::$format." - INFO: ".$mensaje."\n", 3, self::$pathFile);
+                error_log( "\033[32m;" . date('Y-m-d H:i:s').' - '.self::$format." - INFO: ".$mensaje."\n", 3, self::$pathFile)  . "\033[0m;";
             }
             
         }
@@ -65,7 +67,7 @@ class console{
         public static function warn($mensaje) {
             
             if(self::$logLevel <= self::LOG_LEVE_WARN){
-                error_log(date('Y-m-d H:i:s').' - '.self::$format." - WARNING: ".$mensaje."\n", 3, self::$pathFile);
+                error_log( "\033[33m;" . date('Y-m-d H:i:s').' - '.self::$format." - WARNING: ".$mensaje."\n", 3, self::$pathFile) . "\033[0m;";
             }
             
         }
@@ -73,7 +75,7 @@ class console{
         public static function error($mensaje) {
             
             if(self::$logLevel <= self::LOG_LEVE_ERROR){
-                error_log(date('Y-m-d H:i:s').' - '.self::$format." - ERROR: ".$mensaje."\n", 3, self::$pathFile);
+                error_log( "\033[31m;" . date('Y-m-d H:i:s').' - '.self::$format." - ERROR: ".$mensaje."\n", 3, self::$pathFile) . "\033[0m;";
             }
             
         }

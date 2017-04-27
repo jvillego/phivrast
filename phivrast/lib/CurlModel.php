@@ -6,9 +6,11 @@
 
 class CurlModel{
 
-	private static $client = null;
+	//private static $client = null;
 	
-    private static $urlBase;
+    //private static $urlBase;
+    
+    private static $instances = array();
     
     /**
      * Establece la url del webservice rest
@@ -16,29 +18,32 @@ class CurlModel{
      * @param unknown $url
      */
     public static function setUrl($url){
+
+    	self::singleton()->urlBase = $url;
+    	//self::$urlBase = $url;
+    	//self::$client = new Curl();
     	
-    	self::$urlBase = $url;
-    	self::$client = new Curl();
+    	
     }
     
     public static function getUrl(){
-    	return self::$urlBase;
+    	//return self::$urlBase;
+    	return self::singleton()->urlBase;
     }
     
     public  static function setHeader($option, $value){
-    	self::$client->setopt($option, array($value));
+    	//self::$client->setopt($option, array($value));
+    	return self::singleton()->setopt($option, array($value));
     }
     
     public static function __callStatic($name, $arguments) {
-//     	error_log("Dont stop me!", 3, "/tmp/error.log");
-//         error_log("\tCALLED: \n", 3, "/tmp/error.log");
-//         error_log("\tFUNCTION: $name\n", 3, "/tmp/error.log");
-//         error_log("\tARGUMENTS:\n".var_export($arguments,true), 3, "/tmp/error.log");
+    	
         try{
 
             $curl_options = array();
             
-            $result = self::$client->$name(self::$urlBase.$arguments[0], $arguments[1]);
+            //$result = self::$client->$name(self::$urlBase.$arguments[0], $arguments[1]);
+            $result = self::singleton()->$name(self::singleton()->urlBase.$arguments[0], $arguments[1]);
      
             return $result; 
 
@@ -50,4 +55,15 @@ class CurlModel{
     }
     
     
+    private static function singleton(){
+    	//manejamos las instancias (singleton)
+    	$cc = get_called_class();
+    	if(!isset(self::$instances[$cc])){
+    		self::$instances[$cc] = new Curl();
+    	}
+    	
+    	return self::$instances[$cc];
+    }
+    
 }
+
